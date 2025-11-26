@@ -1,0 +1,36 @@
+## =============================================================================
+## Android Release Signing Configuration
+## =============================================================================
+##
+## INSTRUCTIONS:
+## 1. Copy this file to key.properties (which is gitignored)
+## 2. Generate your keystore file using the command below
+## 3. Fill in your actual values
+## 4. Keep key.properties and your .jks file SECURE and NEVER commit them
+##
+## =============================================================================
+
+## Generate keystore command (run in android/app directory):
+## keytool -genkey -v -keystore lorenz-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias lorenz-key
+
+## Keystore file location (relative to android directory)
+storeFile=../app/lorenz-release-key.jks
+
+## Keystore password (set when creating keystore)
+storePassword=YOUR_STORE_PASSWORD_HERE
+
+## Key alias (set when creating keystore)
+keyAlias=lorenz-key
+
+## Key password (set when creating keystore)
+keyPassword=YOUR_KEY_PASSWORD_HERE
+
+## =============================================================================
+## IMPORTANT SECURITY NOTES:
+## =============================================================================
+## 1. Use a STRONG password (min 12 characters, mixed case, numbers, symbols)
+## 2. Store passwords in a password manager
+## 3. Backup your keystore file securely (you CANNOT recover it if lost)
+## 4. Never share your keystore or passwords
+## 5. If keystore is compromised, you cannot update your app in Play Store
+## =============================================================================

@@ -1,0 +1,147 @@
+rules_version = '2';
+
+// ============================================================================
+// FIREBASE STORAGE SECURITY RULES
+// Lorenz Motorcycle Service App
+// ============================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+
+    // Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Check if user is the owner of the resource
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Check if file size is less than specified MB
+    function isLessThan(sizeMB) {
+      return request.resource.size < sizeMB * 1024 * 1024;
+    }
+
+    // Check if user has admin role (requires Firestore lookup)
+    function isAdmin() {
+      return isSignedIn() &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin' &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isActive == true;
+    }
+
+    // ============================================================================
+    // USER PROFILE PICTURES
+    // Path: /users/{userId}/profile/{filename}
+    // ============================================================================
+
+    match /users/{userId}/profile/{filename} {
+      // Users can read their own profile pictures
+      // All authenticated users can read profile pictures (for chat, comments, etc.)
+      allow read: if isSignedIn();
+
+      // Users can only upload their own profile pictures
+      // Must be an image, less than 5MB
+      allow create, update: if isOwner(userId) &&
+                               isImage() &&
+                               isLessThan(5);
+
+      // Users can delete their own profile pictures
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================================================
+    // APPOINTMENT ATTACHMENTS
+    // Path: /appointments/{appointmentId}/attachments/{filename}
+    // ============================================================================
+
+    match /appointments/{appointmentId}/attachments/{filename} {
+      // Users can read attachments for their own appointments
+      // Admins can read all attachments
+      allow read: if isSignedIn() && (
+        firestore.get(/databases/(default)/documents/appointments/$(appointmentId)).data.userId == request.auth.uid ||
+        isAdmin()
+      );
+
+      // Users can upload attachments for their own appointments
+      // Admins can upload attachments for any appointment
+      // Must be image or PDF, less than 10MB
+      allow create, update: if isSignedIn() && (
+        firestore.get(/databases/(default)/documents/appointments/$(appointmentId)).data.userId == request.auth.uid ||
+        isAdmin()
+      ) &&
+      (request.resource.contentType.matches('image/.*') ||
+       request.resource.contentType == 'application/pdf') &&
+      isLessThan(10);
+
+      // Users can delete their own appointment attachments
+      // Admins can delete any attachment
+      allow delete: if isSignedIn() && (
+        firestore.get(/databases/(default)/documents/appointments/$(appointmentId)).data.userId == request.auth.uid ||
+        isAdmin()
+      );
+    }
+
+    // ============================================================================
+    // FEEDBACK ATTACHMENTS
+    // Path: /feedback/{feedbackId}/attachments/{filename}
+    // ============================================================================
+
+    match /feedback/{feedbackId}/attachments/{filename} {
+      // Only admins can read feedback attachments
+      allow read: if isAdmin();
+
+      // Authenticated users can upload attachments with their feedback
+      // Must be image, less than 5MB
+      allow create: if isSignedIn() &&
+                       isImage() &&
+                       isLessThan(5);
+
+      // Only admins can delete feedback attachments
+      allow delete: if isAdmin();
+    }
+
+    // ============================================================================
+    // ADMIN UPLOADS (Service images, promotional content, etc.)
+    // Path: /admin/{path=**}
+    // ============================================================================
+
+    match /admin/{allPaths=**} {
+      // All authenticated users can read admin uploads
+      allow read: if isSignedIn();
+
+      // Only admins can create, update, or delete
+      allow write: if isAdmin();
+    }
+
+    // ============================================================================
+    // TEMPORARY UPLOADS (For image picker preview, etc.)
+    // Path: /temp/{userId}/{filename}
+    // Automatically deleted by Cloud Functions after 24 hours
+    // ============================================================================
+
+    match /temp/{userId}/{filename} {
+      // Users can only access their own temp files
+      allow read, write: if isOwner(userId) &&
+                            isLessThan(10);
+    }
+
+    // ============================================================================
+    // DEFAULT DENY ALL OTHER PATHS
+    // ============================================================================
+
+    // Any path not explicitly defined above is denied by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

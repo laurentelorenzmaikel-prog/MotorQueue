@@ -1,0 +1,129 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# ============================================================================
+# SECURITY: Sensitive files - NEVER COMMIT THESE
+# ============================================================================
+
+# Environment variables and API keys
+.env
+.env.*
+!.env.example
+
+# Firebase configuration (contains API keys)
+# Uncomment if you want to keep these out of git
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
+# lib/firebase_options.dart
+
+# Android signing keys
+*.jks
+*.keystore
+android/key.properties
+android/app/upload-keystore.jks
+android/app/release-keystore.jks
+
+# iOS signing
+ios/Runner/GoogleService-Info.plist.backup
+*.p12
+*.mobileprovision
+*.cer
+
+# Secrets and credentials
+secrets.yaml
+secrets.json
+credentials.json
+service-account.json
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Hive database
+*.hive
+*.lock
+
+# ============================================================================
+# Development and IDE
+# ============================================================================
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Test results
+test-results/
+*.xml
+
+# ============================================================================
+# Firebase
+# ============================================================================
+
+# Firebase cache
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# ============================================================================
+# Other
+# ============================================================================
+
+# Backup files
+*.backup
+*.bak
+*.old
+*~
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "579238365079",
+    "project_id": "lorenz-app",
+    "storage_bucket": "lorenz-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579238365079:android:368d1ee8f2a3ed99dfa6d2",
+        "android_client_info": {
+          "package_name": "com.example.lorenz_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579238365079-ofer8s2mh22hk7og0qi47108d6qfdjv1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lorenz_app",
+            "certificate_hash": "90483c57e95866737ba1474269700ea7464c9cd5"
+          }
+        },
+        {
+          "client_id": "579238365079-u4iaaa8l8hud3qs73f6rk4r3rkogsj6s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lorenz_app",
+            "certificate_hash": "4b1cc23990d46d3ae103d52cf3906a8e5a9d2a33"
+          }
+        },
+        {
+          "client_id": "579238365079-sb2julgnhjt43kt85bbcjn0mlqtnpfnf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg6OvX733R6766KE66a_scE2uw27cdMU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579238365079-sb2julgnhjt43kt85bbcjn0mlqtnpfnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "579238365079-lpscrkij4uc8eqdheiplk27mtn4tpo77.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lorenzApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

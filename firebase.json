@@ -1,0 +1,45 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "lorenz-motorcycle-servic-47ae6",
+          "appId": "1:18180802177:android:d6f2ba9a152e1c54912f80",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "lorenz-app",
+          "configurations": {
+            "android": "1:579238365079:android:368d1ee8f2a3ed99dfa6d2",
+            "web": "1:579238365079:web:ec22610fe8bdb52adfa6d2"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-southeast1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

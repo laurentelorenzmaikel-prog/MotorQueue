@@ -1,0 +1,92 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.firebase-perf'
+    id 'com.google.firebase.crashlytics'
+}
+
+// Load keystore properties from key.properties file
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+def hasKeystoreProperties = keystorePropertiesFile.exists()
+
+if (hasKeystoreProperties) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace = "com.example.lorenz_app"
+    compileSdk = 35  // Updated from flutter.compileSdkVersion to fix plugin compatibility
+    ndkVersion = "27.0.12077973"  // Updated for Firebase plugin compatibility
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    // Signing configurations
+    signingConfigs {
+        release {
+            if (hasKeystoreProperties) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            } else {
+                // Fallback to debug keystore if key.properties doesn't exist
+                // This allows development builds to work without production keys
+                println "WARNING: key.properties not found. Using debug keystore for release build."
+                println "To create production keystore, see: android/key.properties.example"
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+                storeFile file('debug.keystore')
+                storePassword 'android'
+            }
+        }
+    }
+
+    defaultConfig {
+        // TODO: Change this to your actual package name (not com.example)
+        // See: https://developer.android.com/studio/build/application-id.html
+        applicationId = "com.example.lorenz_app"
+
+        minSdkVersion 23
+        targetSdk = 35  // Updated to match compileSdk
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // Use release signing configuration
+            signingConfig = signingConfigs.release
+
+            // Enable code shrinking, obfuscation, and optimization
+            minifyEnabled true
+            shrinkResources true
+
+            // ProGuard rules for code obfuscation
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            // Debug builds use debug keystore automatically
+            signingConfig = signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:34.0.0')
+}
