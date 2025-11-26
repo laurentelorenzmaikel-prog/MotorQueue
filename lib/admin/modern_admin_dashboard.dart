@@ -42,6 +42,24 @@ class _ModernAdminDashboardState extends State<ModernAdminDashboard> {
   int pendingAppointments = 0;
   int rejectedAppointments = 0;
 
+  final List<String> _canonicalServices = [
+    'General Maintenance & Repairs',
+    'Engine & Electrical Work',
+    'Performance & Customization',
+    'Custom Work & Accessories Installation',
+  ];
+
+  final Map<String, String> _serviceAliases = {
+    'General Maintenance & Repairs': 'General Maintenance & Repairs',
+    'General Maintenance &\nRepairs': 'General Maintenance & Repairs',
+    'Engine & Electrical Work': 'Engine & Electrical Work',
+    'Engine & Electrical\nWork': 'Engine & Electrical Work',
+    'Performance & Customization': 'Performance & Customization',
+    'Performance &\nCustomization': 'Performance & Customization',
+    'Custom Work & Accessories Installation': 'Custom Work & Accessories Installation',
+    'Custom Work &\nAccessories Installation': 'Custom Work & Accessories Installation',
+  };
+
   bool get isMobile => false;
   bool get isTablet => false;
   bool get isDesktop => true;
@@ -95,9 +113,12 @@ class _ModernAdminDashboardState extends State<ModernAdminDashboard> {
       for (final doc in appointments.docs) {
         final data = doc.data();
 
-        // Count service types
-        final service = data['service'] as String? ?? 'Other';
-        tempServiceData[service] = (tempServiceData[service] ?? 0) + 1;
+        // Count service types (restricted to 4 canonical types)
+        final rawService = (data['service'] as String?)?.trim() ?? '';
+        final normalized = _serviceAliases[rawService] ?? '';
+        if (normalized.isNotEmpty && _canonicalServices.contains(normalized)) {
+          tempServiceData[normalized] = (tempServiceData[normalized] ?? 0) + 1;
+        }
 
         // Count appointment status
         final status = data['status'] as String? ?? 'pending';
@@ -1215,22 +1236,22 @@ class _ModernAdminDashboardState extends State<ModernAdminDashboard> {
       const Color(0xFF10B981),
       const Color(0xFFF59E0B),
       const Color(0xFFEF4444),
-      const Color(0xFF8B5CF6),
-      const Color(0xFF06B6D4),
-      const Color(0xFFEC4899),
-      const Color(0xFF6366F1),
     ];
 
-    final entries = serviceTypeData.entries.toList();
-    return entries.asMap().entries.map((entry) {
+    final validServices = _canonicalServices
+        .where((s) => (serviceTypeData[s] ?? 0) > 0)
+        .toList();
+
+    return validServices.asMap().entries.map((entry) {
       final index = entry.key;
-      final serviceEntry = entry.value;
+      final serviceName = entry.value;
+      final count = serviceTypeData[serviceName] ?? 0;
       final percentage = totalAppointments > 0
-          ? (serviceEntry.value / totalAppointments * 100)
+          ? (count / totalAppointments * 100)
           : 0.0;
 
       return PieChartSectionData(
-        value: serviceEntry.value.toDouble(),
+        value: count.toDouble(),
         title: '${percentage.toStringAsFixed(0)}%',
         color: colors[index % colors.length],
         radius: 50,
@@ -1249,17 +1270,18 @@ class _ModernAdminDashboardState extends State<ModernAdminDashboard> {
       const Color(0xFF10B981),
       const Color(0xFFF59E0B),
       const Color(0xFFEF4444),
-      const Color(0xFF8B5CF6),
-      const Color(0xFF06B6D4),
-      const Color(0xFFEC4899),
-      const Color(0xFF6366F1),
     ];
+
+    final validServices = _canonicalServices
+        .where((s) => (serviceTypeData[s] ?? 0) > 0)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: serviceTypeData.entries.toList().asMap().entries.map((entry) {
+      children: validServices.asMap().entries.map((entry) {
         final index = entry.key;
-        final serviceEntry = entry.value;
+        final serviceName = entry.value;
+        final count = serviceTypeData[serviceName] ?? 0;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
@@ -1276,9 +1298,8 @@ class _ModernAdminDashboardState extends State<ModernAdminDashboard> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '${serviceEntry.key} (${serviceEntry.value})',
-                  style:
-                      const TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
+                  '$serviceName ($count)',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
