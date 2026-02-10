@@ -1,14 +1,8 @@
 {
-    "version": 2,
-  "builds": [
-    {
-      "src": "pubspec.yaml",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build/web"
-      }
-    }
-  ],
+  "buildCommand": "if cd flutter; then git pull && cd .. ; else git clone https://github.com/flutter/flutter.git -b stable --depth 1; fi && flutter/bin/flutter doctor && flutter/bin/flutter pub get && flutter/bin/flutter build web --release --web-renderer canvaskit",
+  "outputDirectory": "build/web",
+  "installCommand": "echo 'Flutter will be installed in buildCommand'",
+  "framework": null,
   "routes": [
     {
       "handle": "filesystem"
@@ -17,8 +11,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "buildCommand": "flutter build web --release --web-renderer canvaskit --dart-define=FLUTTER_WEB_USE_SKIA=false",
-  "outputDirectory": "build/web",
-  "framework": null
+  ]
 }
